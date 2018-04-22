@@ -13,8 +13,16 @@ UCLASS()
 class PUZZLEPLATFORMS_API UPuzzlePlatformsGameInstance : public UGameInstance
 {
 	GENERATED_BODY()
+
+public:
+	UPuzzlePlatformsGameInstance(const FObjectInitializer& objectinitializer);
+
+protected:
+	virtual void Init() override;
 	
-	
-	
-	
+	UFUNCTION(Exec)
+	void Host();
+
+	UFUNCTION(Exec)
+	void Join(const FString& adress);
 };
