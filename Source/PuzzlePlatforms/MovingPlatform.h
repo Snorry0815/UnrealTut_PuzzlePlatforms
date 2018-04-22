@@ -20,7 +20,25 @@ public:
 	UPROPERTY(EditAnywhere)
 	float speed;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MyCategory", Meta = (MakeEditWidget = true)) 
+	FVector targetLocation;
+
+	void AddActiveTrigger();
+	void RemoveActiveTrigger();
+
 protected:
 	virtual void BeginPlay() override;
+	void MovePlatform(float DeltaTime);
 	virtual void Tick(float DeltaTime) override;
+
+private:
+	FVector globalStartLocation;
+	FVector globalTargetLocation;
+	FVector movingVector;
+	float totalTravelDistance;
+	float distanceTraveled;
+	float direction;
+
+	UPROPERTY(EditAnywhere)
+	int activeTriggers = 1;
 };
