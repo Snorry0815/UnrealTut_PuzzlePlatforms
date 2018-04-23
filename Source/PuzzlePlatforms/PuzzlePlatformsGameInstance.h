@@ -20,9 +20,15 @@ public:
 protected:
 	virtual void Init() override;
 	
+	UFUNCTION(Exec, BlueprintCallable, Category = "MainMenu")
+	void LoadMenu();
+
 	UFUNCTION(Exec)
 	void Host();
 
 	UFUNCTION(Exec)
 	void Join(const FString& adress);
+
+private:
+	TSubclassOf<class UUserWidget> MenuClass;
 };
