@@ -6,6 +6,7 @@
 #include "Blueprint/UserWidget.h"
 #include "PlatformTrigger.h"
 #include "MenuSystem/MainMenu.h"
+#include "HUD/HudMenu.h"
 
 UPuzzlePlatformsGameInstance::UPuzzlePlatformsGameInstance(const FObjectInitializer& objectinitializer)
 	: UGameInstance(objectinitializer)
@@ -14,7 +15,13 @@ UPuzzlePlatformsGameInstance::UPuzzlePlatformsGameInstance(const FObjectInitiali
 	if (!ensure(MainMenuBPClass.Class != nullptr))
 		return;
 
-	MenuClass = MainMenuBPClass.Class;
+	MenuClass = MainMenuBPClass.Class;	
+	
+	static ConstructorHelpers::FClassFinder<UHudMenu> HudMenuBPClass(TEXT("/Game/Hud/WBP_HudMenu"));
+	if (!ensure(HudMenuBPClass.Class != nullptr))
+		return;
+
+	HudClass = HudMenuBPClass.Class;
 }
 
 void UPuzzlePlatformsGameInstance::LoadMenu()
@@ -29,6 +36,26 @@ void UPuzzlePlatformsGameInstance::LoadMenu()
 	menu->Setup();
 	menu->SetMenuInterface(this);
 }
+
+void UPuzzlePlatformsGameInstance::ToggleHudMenu()
+{
+	if (hudMenu != nullptr)
+	{
+		hudMenu->Toggle();
+	}
+	else
+	{
+		if (!ensure(HudClass != nullptr))
+			return;
+
+		hudMenu = CreateWidget<UHudMenu>(this, HudClass);
+		if (!ensure(hudMenu != nullptr))
+			return;
+
+		hudMenu->Show();
+	}
+}
+
 
 void UPuzzlePlatformsGameInstance::Init()
 {

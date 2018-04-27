@@ -43,8 +43,6 @@ void UMainMenu::OnLevelRemovedFromWorld(ULevel* InLevel, UWorld* InWorld)
 		return;
 
 	FInputModeGameOnly inputMode;
-	//inputMode.SetWidgetToFocus();
-	//inputMode.SetLockMouseToViewportBehavior(EMouseLockMode::LockAlways);
 	playerController->SetInputMode(inputMode);
 	playerController->bShowMouseCursor = false;
 
@@ -60,9 +58,22 @@ bool UMainMenu::Initialize()
 		return false;
 	
 	hostButton->OnClicked.AddDynamic(this, &UMainMenu::OnHostClicked);
-	joinButton->OnClicked.AddDynamic(this, &UMainMenu::OnJoinClicked);
-	joinWithIp->OnClicked.AddDynamic(this, &UMainMenu::OnJoinServer);
 
+	if (!ensure(joinButton != nullptr))
+		return false;
+
+	joinButton->OnClicked.AddDynamic(this, &UMainMenu::OnJoinClicked);
+
+	if (!ensure(cancelJoin != nullptr))
+		return false;
+
+	cancelJoin->OnClicked.AddDynamic(this, &UMainMenu::OnCancelJoinClicked);
+
+	if (!ensure(joinWithIp != nullptr))
+		return false;
+
+	joinWithIp->OnClicked.AddDynamic(this, &UMainMenu::OnJoinServer);
+	
 	return true;
 }
 
@@ -77,7 +88,12 @@ void UMainMenu::OnHostClicked()
 
 void UMainMenu::OnJoinClicked()
 {
-	menuSelecter->SetActiveWidgetIndex(1);
+	menuSelecter->SetActiveWidget(joinMenu);
+}
+
+void UMainMenu::OnCancelJoinClicked()
+{
+	menuSelecter->SetActiveWidget(mainMenu);
 }
 
 void UMainMenu::OnJoinServer()

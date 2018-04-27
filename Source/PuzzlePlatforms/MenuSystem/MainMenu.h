@@ -19,13 +19,16 @@ public:
 	void SetMenuInterface(IMenuInterface* newMenuInterface);
 
 	void Setup();
-	virtual  void OnLevelRemovedFromWorld(ULevel* InLevel, UWorld* InWorld) override;
+	virtual void OnLevelRemovedFromWorld(ULevel* InLevel, UWorld* InWorld) override;
 
 	UPROPERTY(meta = (BindWidget))
 	class UButton* hostButton;
 
 	UPROPERTY(meta = (BindWidget))
 	class UButton* joinButton;
+
+	UPROPERTY(meta = (BindWidget))
+	class UButton* cancelJoin;
 
 	UPROPERTY(meta = (BindWidget))
 	class UButton* joinWithIp;
@@ -35,6 +38,12 @@ public:
 
 	UPROPERTY(meta = (BindWidget))
 	class UEditableText* ipAdress;
+
+	UPROPERTY(meta = (BindWidget))
+	class UWidget* joinMenu;
+
+	UPROPERTY(meta = (BindWidget))
+	class UWidget* mainMenu;
 
 protected:
 	virtual bool Initialize() override;
@@ -48,6 +57,9 @@ private:
 
 	UFUNCTION()
 	void OnJoinServer();
+
+	UFUNCTION()
+	void OnCancelJoinClicked();
 
 	IMenuInterface* menuInterface;
 };

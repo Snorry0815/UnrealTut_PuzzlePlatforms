@@ -24,6 +24,9 @@ protected:
 	UFUNCTION(Exec, BlueprintCallable, Category = "MainMenu")
 	void LoadMenu();
 
+	UFUNCTION(Exec, BlueprintCallable, Category = "MainMenu")
+	void ToggleHudMenu();
+
 	UFUNCTION(Exec)
 	virtual void Host() override;
 
@@ -32,4 +35,7 @@ protected:
 
 private:
 	TSubclassOf<class UUserWidget> MenuClass;
+	TSubclassOf<class UUserWidget> HudClass;
+
+	class UHudMenu* hudMenu;
 };
