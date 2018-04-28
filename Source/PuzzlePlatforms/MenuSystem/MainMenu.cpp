@@ -6,49 +6,6 @@
 #include "EditableText.h"
 #include "Engine/Engine.h"
 
-void UMainMenu::SetMenuInterface(IMenuInterface* newMenuInterface)
-{
-	menuInterface = newMenuInterface;
-}
-
-void UMainMenu::Setup()
-{
-	auto* world = GetWorld();
-	if (!ensure(world != nullptr))
-		return;
-	
-	AddToViewport();
-
-	auto* playerController = world->GetFirstPlayerController();
-	if (!ensure(playerController != nullptr))
-		return;
-
-	FInputModeUIOnly inputMode;
-	inputMode.SetWidgetToFocus(TakeWidget());
-	inputMode.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);
-	playerController->SetInputMode(inputMode);
-	playerController->bShowMouseCursor = true;
-}
-
-void UMainMenu::OnLevelRemovedFromWorld(ULevel* InLevel, UWorld* InWorld)
-{
-	RemoveFromViewport();
-
-	auto* world = GetWorld();
-	if (!ensure(world != nullptr))
-		return;
-
-	auto* playerController = world->GetFirstPlayerController();
-	if (!ensure(playerController != nullptr))
-		return;
-
-	FInputModeGameOnly inputMode;
-	playerController->SetInputMode(inputMode);
-	playerController->bShowMouseCursor = false;
-
-	Super::OnLevelRemovedFromWorld(InLevel, InWorld);
-}
-
 bool UMainMenu::Initialize()
 {
 	if (!Super::Initialize())

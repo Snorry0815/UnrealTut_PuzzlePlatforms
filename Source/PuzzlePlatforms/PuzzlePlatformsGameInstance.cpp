@@ -4,9 +4,8 @@
 #include "Engine/Engine.h"
 #include "UObject/ConstructorHelpers.h"
 #include "Blueprint/UserWidget.h"
-#include "PlatformTrigger.h"
 #include "MenuSystem/MainMenu.h"
-#include "HUD/HudMenu.h"
+#include "MenuSystem/HudMenu.h"
 
 UPuzzlePlatformsGameInstance::UPuzzlePlatformsGameInstance(const FObjectInitializer& objectinitializer)
 	: UGameInstance(objectinitializer)
@@ -17,7 +16,7 @@ UPuzzlePlatformsGameInstance::UPuzzlePlatformsGameInstance(const FObjectInitiali
 
 	MenuClass = MainMenuBPClass.Class;	
 	
-	static ConstructorHelpers::FClassFinder<UHudMenu> HudMenuBPClass(TEXT("/Game/Hud/WBP_HudMenu"));
+	static ConstructorHelpers::FClassFinder<UHudMenu> HudMenuBPClass(TEXT("/Game/MenuSystem/WBP_HudMenu"));
 	if (!ensure(HudMenuBPClass.Class != nullptr))
 		return;
 
