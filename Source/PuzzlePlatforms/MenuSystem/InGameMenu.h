@@ -17,8 +17,6 @@ class PUZZLEPLATFORMS_API UInGameMenu : public UUserWidget
 public:
 	void SetMenuInterface(IMenuInterface* newMenuInterface);
 
-	void Setup();
-
 	virtual void OnLevelRemovedFromWorld(ULevel* InLevel, UWorld* InWorld) override;
 
 	void Toggle();
@@ -26,5 +24,5 @@ public:
 	void Hide();
 
 protected:
-	IMenuInterface * menuInterface;
+	IMenuInterface* menuInterface;
 };

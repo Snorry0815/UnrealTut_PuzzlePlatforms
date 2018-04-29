@@ -30,7 +30,12 @@ bool UMainMenu::Initialize()
 		return false;
 
 	joinWithIp->OnClicked.AddDynamic(this, &UMainMenu::OnJoinServer);
-	
+
+	if (!ensure(btnQuit != nullptr))
+		return false;
+
+	btnQuit->OnClicked.AddDynamic(this, &UMainMenu::OnQuit);
+
 	return true;
 }
 
@@ -57,4 +62,9 @@ void UMainMenu::OnJoinServer()
 {
 	auto text = ipAdress->GetText();
 	menuInterface->Join(text.ToString());
+}
+
+void UMainMenu::OnQuit()
+{
+	menuInterface->Quit();
 }

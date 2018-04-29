@@ -29,5 +29,5 @@ void UHudMenu::OnCancelClicked()
 
 void UHudMenu::OnQuitClicked()
 {
-	FGenericPlatformMisc::RequestExit(false);
+	menuInterface->BackToMainMenu();
 }

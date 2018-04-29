@@ -25,33 +25,39 @@ private:
 	void OnJoinServer();
 
 	UFUNCTION()
+	void OnQuit();
+
+	UFUNCTION()
 	void OnCancelJoinClicked();
 
 
 	UPROPERTY(meta = (BindWidget))
-		class UButton* hostButton;
+	class UButton* hostButton;
 
 	UPROPERTY(meta = (BindWidget))
-		class UButton* joinButton;
+	class UButton* joinButton;
 
 	UPROPERTY(meta = (BindWidget))
-		class UButton* cancelJoin;
+	class UButton* cancelJoin;
 
 	UPROPERTY(meta = (BindWidget))
-		class UButton* joinWithIp;
+	class UButton* joinWithIp;
 
 	UPROPERTY(meta = (BindWidget))
-		class UWidgetSwitcher* menuSelecter;
+	class UButton* btnQuit;
 
 	UPROPERTY(meta = (BindWidget))
-		class UEditableText* ipAdress;
+	class UWidgetSwitcher* menuSelecter;
 
 	UPROPERTY(meta = (BindWidget))
-		class UWidget* joinMenu;
+	class UEditableText* ipAdress;
 
 	UPROPERTY(meta = (BindWidget))
-		class UWidget* mainMenu;
+	class UWidget* joinMenu;
 
+	UPROPERTY(meta = (BindWidget))
+	class UWidget* mainMenu;
+	
 protected:
 	virtual bool Initialize() override;
 };

@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Engine/GameInstance.h"
 #include "MenuSystem/MenuInterface.h"
+#include "DestroySessionCallbackProxy.h"
 #include "PuzzlePlatformsGameInstance.generated.h"
 
 /**
@@ -18,11 +19,14 @@ class PUZZLEPLATFORMS_API UPuzzlePlatformsGameInstance : public UGameInstance, p
 public:
 	UPuzzlePlatformsGameInstance(const FObjectInitializer& objectinitializer);
 
+	void NetworkError(UWorld* World, class UNetDriver* NetDriver, ENetworkFailure::Type FailureType, const FString& ErrorString);
+	void WorldDestroyed(class UWorld* InWorld);
+	
 protected:
 	virtual void Init() override;
-	
+
 	UFUNCTION(Exec, BlueprintCallable, Category = "MainMenu")
-	void LoadMenu();
+	void LoadMainMenu();
 
 	UFUNCTION(Exec, BlueprintCallable, Category = "MainMenu")
 	void ToggleHudMenu();
@@ -33,7 +37,19 @@ protected:
 	UFUNCTION(Exec)
 	virtual void Join(const FString& adress) override;
 
+	UFUNCTION(Exec)
+	virtual void BackToMainMenu() override;
+
+	UFUNCTION(Exec)
+	virtual void Quit() override;
+
 private:
+	FOnDestroySessionCompleteDelegate DestroySessionComplete;
+	void OnDestroySessionComplete(FName SessionName, bool bWasSuccessful);
+
+	void QuitServer();
+	void QuitClient();
+
 	TSubclassOf<class UUserWidget> MenuClass;
 	TSubclassOf<class UUserWidget> HudClass;
 
