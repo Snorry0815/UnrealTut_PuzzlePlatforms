@@ -6,6 +6,8 @@
 #include "Engine/GameInstance.h"
 #include "MenuSystem/MenuInterface.h"
 #include "DestroySessionCallbackProxy.h"
+#include "OnlineSessionInterface.h"
+#include "MenuSystem/ServerFoundEntry.h"
 #include "PuzzlePlatformsGameInstance.generated.h"
 
 /**
@@ -47,11 +49,22 @@ private:
 	FOnDestroySessionCompleteDelegate DestroySessionComplete;
 	void OnDestroySessionComplete(FName SessionName, bool bWasSuccessful);
 
+	FOnDestroySessionCompleteDelegate DestroyBeforeHostingComplete;
+	void OnDestroySessionBeforeHostingComplete (FName SessionName, bool bWasSuccessful);
+
+	void OnCreateSessionComplete(FName SessionName, bool bWasSuccessful);
+
+	void StartSession();
+
 	void QuitServer();
 	void QuitClient();
+
+	void OnFindSessionsComplete(bool success);
 
 	TSubclassOf<class UUserWidget> MenuClass;
 	TSubclassOf<class UUserWidget> HudClass;
 
+	TSharedPtr<class FOnlineSessionSearch> onlineSessionSearch;
 	class UHudMenu* hudMenu;
+	IOnlineSessionPtr sessionInterface;
 };

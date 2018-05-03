@@ -3,8 +3,20 @@
 #include "MainMenu.h"
 #include "Button.h"
 #include "WidgetSwitcher.h"
-#include "EditableText.h"
 #include "Engine/Engine.h"
+#include "ServerFoundEntry.h"
+#include "ScrollBox.h"
+#include "ConstructorHelpers.h"
+
+UMainMenu::UMainMenu(const FObjectInitializer& ObjectInitializer)
+	: Super(ObjectInitializer)
+{
+	static ConstructorHelpers::FClassFinder<UServerFoundEntry> ServerFoundEntryBPClass(TEXT("/Game/MenuSystem/WBP_ServerFoundEntry"));
+	if (!ensure(ServerFoundEntryBPClass.Class != nullptr))
+		return;
+
+	ServerFoundEntryClass = ServerFoundEntryBPClass.Class;
+}
 
 bool UMainMenu::Initialize()
 {
@@ -60,8 +72,15 @@ void UMainMenu::OnCancelJoinClicked()
 
 void UMainMenu::OnJoinServer()
 {
-	auto text = ipAdress->GetText();
-	menuInterface->Join(text.ToString());
+	auto* world = this->GetWorld();
+	if (!ensure(world != nullptr))
+		return;
+
+	auto* entry = CreateWidget<UServerFoundEntry>(world, ServerFoundEntryClass);
+	if (!ensure(entry != nullptr))
+		return;
+
+	ipAdressTarget->AddChild(entry);
 }
 
 void UMainMenu::OnQuit()

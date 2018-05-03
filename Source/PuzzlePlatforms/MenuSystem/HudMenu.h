@@ -25,9 +25,9 @@ private:
 	void OnQuitClicked();
 
 	UPROPERTY(meta = (BindWidget))
-		class UButton* cancelButton;
+	class UButton* cancelButton;
 
 	UPROPERTY(meta = (BindWidget))
-		class UButton* quitButton;
+	class UButton* quitButton;
 
 };

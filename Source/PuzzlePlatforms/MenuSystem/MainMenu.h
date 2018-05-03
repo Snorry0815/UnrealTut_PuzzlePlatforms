@@ -13,6 +13,8 @@ UCLASS()
 class PUZZLEPLATFORMS_API UMainMenu : public UInGameMenu
 {
 	GENERATED_BODY()
+public:
+	UMainMenu(const FObjectInitializer& ObjectInitializer);
 
 private:
 	UFUNCTION()
@@ -50,14 +52,16 @@ private:
 	class UWidgetSwitcher* menuSelecter;
 
 	UPROPERTY(meta = (BindWidget))
-	class UEditableText* ipAdress;
-
-	UPROPERTY(meta = (BindWidget))
 	class UWidget* joinMenu;
 
 	UPROPERTY(meta = (BindWidget))
 	class UWidget* mainMenu;
-	
+
+	UPROPERTY(meta = (BindWidget))
+	class UScrollBox* ipAdressTarget;
+
+	TSubclassOf<class UServerFoundEntry> ServerFoundEntryClass;
+
 protected:
 	virtual bool Initialize() override;
 };
