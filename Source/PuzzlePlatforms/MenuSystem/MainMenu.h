@@ -16,7 +16,11 @@ class PUZZLEPLATFORMS_API UMainMenu : public UInGameMenu
 public:
 	UMainMenu(const FObjectInitializer& ObjectInitializer);
 
+	void SetServerList(const TArray<FOnlineSessionSearchResult>& searchResults);
+
 private:
+	void AddServerListEntry(const FString& serverName);
+
 	UFUNCTION()
 	void OnHostClicked();
 
@@ -30,6 +34,9 @@ private:
 	void OnQuit();
 
 	UFUNCTION()
+	void OnRefreshServerList();
+
+	UFUNCTION()
 	void OnCancelJoinClicked();
 
 
@@ -41,6 +48,9 @@ private:
 
 	UPROPERTY(meta = (BindWidget))
 	class UButton* cancelJoin;
+
+	UPROPERTY(meta = (BindWidget))
+	class UButton* btnRefresh;
 
 	UPROPERTY(meta = (BindWidget))
 	class UButton* joinWithIp;

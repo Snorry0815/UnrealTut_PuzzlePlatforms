@@ -40,6 +40,9 @@ protected:
 	virtual void Join(const FString& adress) override;
 
 	UFUNCTION(Exec)
+	virtual void RefreshServerList() override;
+
+	UFUNCTION(Exec)
 	virtual void BackToMainMenu() override;
 
 	UFUNCTION(Exec)
@@ -65,6 +68,9 @@ private:
 	TSubclassOf<class UUserWidget> HudClass;
 
 	TSharedPtr<class FOnlineSessionSearch> onlineSessionSearch;
-	class UHudMenu* hudMenu;
+	class UHudMenu* hudMenu; 
+	class UMainMenu* menu;
+
 	IOnlineSessionPtr sessionInterface;
+	bool refreshActive;
 };

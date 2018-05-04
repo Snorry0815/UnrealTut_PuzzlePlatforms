@@ -13,7 +13,10 @@ UCLASS()
 class PUZZLEPLATFORMS_API UServerFoundEntry : public UUserWidget
 {
 	GENERATED_BODY()
+public:
+	void SetText(const FText& inText);
 
+private:
 	UPROPERTY(meta = (BindWidget))
-	class UTextBlock* ipAdress;
+	class UTextBlock* serverName;
 };

@@ -7,6 +7,8 @@
 #include "ServerFoundEntry.h"
 #include "ScrollBox.h"
 #include "ConstructorHelpers.h"
+#include "Text.h"
+#include "OnlineSessionSettings.h"
 
 UMainMenu::UMainMenu(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -16,6 +18,29 @@ UMainMenu::UMainMenu(const FObjectInitializer& ObjectInitializer)
 		return;
 
 	ServerFoundEntryClass = ServerFoundEntryBPClass.Class;
+}
+
+void UMainMenu::SetServerList(const TArray<FOnlineSessionSearchResult>& searchResults)
+{
+	ipAdressTarget->ClearChildren();
+	for (const auto& searchResult : searchResults)
+	{
+		AddServerListEntry(searchResult.Session.GetSessionIdStr());
+	}
+}
+
+void UMainMenu::AddServerListEntry(const FString& serverName)
+{
+	auto* world = this->GetWorld();
+	if (!ensure(world != nullptr))
+		return;
+
+	auto* entry = CreateWidget<UServerFoundEntry>(world, ServerFoundEntryClass);
+	if (!ensure(entry != nullptr))
+		return;
+	entry->SetText(FText::FromString(serverName));
+
+	ipAdressTarget->AddChild(entry);
 }
 
 bool UMainMenu::Initialize()
@@ -46,7 +71,11 @@ bool UMainMenu::Initialize()
 	if (!ensure(btnQuit != nullptr))
 		return false;
 
-	btnQuit->OnClicked.AddDynamic(this, &UMainMenu::OnQuit);
+	btnQuit->OnClicked.AddDynamic(this, &UMainMenu::OnQuit);	
+	
+	if (!ensure(btnRefresh != nullptr))
+		return false;
+	btnRefresh->OnClicked.AddDynamic(this, &UMainMenu::OnRefreshServerList);
 
 	return true;
 }
@@ -62,6 +91,8 @@ void UMainMenu::OnHostClicked()
 
 void UMainMenu::OnJoinClicked()
 {
+	OnRefreshServerList();
+
 	menuSelecter->SetActiveWidget(joinMenu);
 }
 
@@ -72,18 +103,22 @@ void UMainMenu::OnCancelJoinClicked()
 
 void UMainMenu::OnJoinServer()
 {
-	auto* world = this->GetWorld();
-	if (!ensure(world != nullptr))
+	if (menuInterface == nullptr)
 		return;
 
-	auto* entry = CreateWidget<UServerFoundEntry>(world, ServerFoundEntryClass);
-	if (!ensure(entry != nullptr))
-		return;
-
-	ipAdressTarget->AddChild(entry);
+	menuInterface->Join("");
 }
 
 void UMainMenu::OnQuit()
 {
+	if (menuInterface == nullptr)
+		return;
 	menuInterface->Quit();
+}
+
+void UMainMenu::OnRefreshServerList()
+{
+	if (menuInterface == nullptr)
+		return;
+	menuInterface->RefreshServerList();
 }

@@ -77,9 +77,10 @@ void UPuzzlePlatformsGameInstance::Init()
 			sessionInterface->OnCreateSessionCompleteDelegates.AddUObject(this, &UPuzzlePlatformsGameInstance::OnCreateSessionComplete);
 			sessionInterface->OnFindSessionsCompleteDelegates.AddUObject(this, &UPuzzlePlatformsGameInstance::OnFindSessionsComplete);
 			onlineSessionSearch = MakeShareable(new FOnlineSessionSearch());
-			if (onlineSessionSearch.IsValid())
-				onlineSessionSearch->bIsLanQuery = true;
-				sessionInterface->FindSessions(0, onlineSessionSearch.ToSharedRef());
+			//if (onlineSessionSearch.IsValid())
+			//{
+			//	onlineSessionSearch->bIsLanQuery = true;	
+			//}
 		}
 	}
 
@@ -96,7 +97,7 @@ void UPuzzlePlatformsGameInstance::LoadMainMenu()
 	if (!ensure(MenuClass != nullptr))
 		return;
 
-	auto* menu = CreateWidget<UMainMenu>(this, MenuClass);
+	menu = CreateWidget<UMainMenu>(this, MenuClass);
 	if (!ensure(menu != nullptr))
 		return;
 
@@ -132,6 +133,18 @@ void UPuzzlePlatformsGameInstance::Join(const FString& adress)
 
 
 	localPlayer->ClientTravel(adress, ETravelType::TRAVEL_Absolute);
+}
+
+void UPuzzlePlatformsGameInstance::RefreshServerList()
+{
+	if (refreshActive)
+		return;
+
+	if (onlineSessionSearch.IsValid())
+	{
+		refreshActive = true;
+		sessionInterface->FindSessions(0, onlineSessionSearch.ToSharedRef());
+	}
 }
 
 void UPuzzlePlatformsGameInstance::BackToMainMenu()
@@ -226,20 +239,17 @@ void UPuzzlePlatformsGameInstance::QuitClient()
 
 void UPuzzlePlatformsGameInstance::OnFindSessionsComplete(bool success)
 {
+	refreshActive = false;
+
 	if (!success || !onlineSessionSearch.IsValid())
 	{
 		UE_LOG(LogTemp, Warning, TEXT("OnFindSessionsComplete not OnFindSessionsComplete!"));
 		return;
 	}
 
-	UE_LOG(LogTemp, Warning, TEXT("OnFindSessionsComplete OnFindSessionsComplete!"));
-
 	const auto& results = onlineSessionSearch->SearchResults;
-
-	UE_LOG(LogTemp, Warning, TEXT("Found number: %i"), results.Num());
-
-	for (const auto& result : results)
+	if (menu)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Found: %s"), *result.GetSessionIdStr());
+		menu->SetServerList(results);
 	}
 }
