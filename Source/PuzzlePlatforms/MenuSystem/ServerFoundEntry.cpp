@@ -4,12 +4,20 @@
 #include "Components/TextBlock.h"
 #include "Components/Button.h"
 #include "MainMenu.h"
+#include "OnlineSessionSettings.h"
 
-void UServerFoundEntry::Setup(UMainMenu* _parent, uint32 _index, const FText& inText)
+void UServerFoundEntry::Setup(UMainMenu* _parent, uint32 _index, const class FOnlineSessionSearchResult& searchResult)
 {
 	parent = _parent;
 	index = _index;
-	serverName->SetText(inText);
+	FString serverNameValue;
+	searchResult.Session.SessionSettings.Get(TEXT("ServerName"), serverNameValue);
+	serverName->SetText(FText::FromString(serverNameValue));
+	serverOwnerName->SetText(FText::FromString(searchResult.Session.OwningUserName));
+	int availableConnections = searchResult.Session.NumOpenPrivateConnections + searchResult.Session.NumOpenPublicConnections;
+	int totalConnections = searchResult.Session.SessionSettings.NumPrivateConnections + searchResult.Session.SessionSettings.NumPublicConnections;
+	
+	numberOfPlayers->SetText(FText::FromString(FString::Printf(TEXT("%d/%d"), totalConnections - availableConnections, totalConnections)));
 
 	if (!ensure(btnServerFoundEntry != nullptr))
 		return;

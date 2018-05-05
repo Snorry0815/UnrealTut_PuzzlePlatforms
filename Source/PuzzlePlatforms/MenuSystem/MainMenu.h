@@ -20,7 +20,8 @@ public:
 	void SelectIndex(uint32 index);
 
 private:
-	void AddServerListEntry(const class FOnlineSession& session, uint32 index);
+	void AddServerListEntry(const class FOnlineSessionSearchResult& searchResult, uint32 index);
+	void SetSelectedForIndex(uint32 index, bool value) const;
 
 	UFUNCTION()
 	void OnHostClicked();
@@ -39,6 +40,12 @@ private:
 
 	UFUNCTION()
 	void OnCancelJoinClicked();
+
+	UFUNCTION()
+	void OnCancelHostSettingsClicked();
+
+	UFUNCTION()
+	void OnStartServerWithSettingsClicked();
 
 
 	UPROPERTY(meta = (BindWidget))
@@ -63,10 +70,29 @@ private:
 	class UWidgetSwitcher* menuSelecter;
 
 	UPROPERTY(meta = (BindWidget))
+	class UWidgetSwitcher* wsResultField;
+
+	UPROPERTY(meta = (BindWidget))
+	class UWidget* refreshingIndicator;
+	
+	UPROPERTY(meta = (BindWidget))
 	class UWidget* joinMenu;
 
 	UPROPERTY(meta = (BindWidget))
 	class UWidget* mainMenu;
+
+	UPROPERTY(meta = (BindWidget))
+	class UWidget* hostSettings;
+	
+	UPROPERTY(meta = (BindWidget))
+	class UEditableTextBox* serverNameField;
+
+	UPROPERTY(meta = (BindWidget))
+	class UButton* btnStartServerWithSettings;
+
+	UPROPERTY(meta = (BindWidget))
+	class UButton* btnCancelHostSettings;
+
 
 	UPROPERTY(meta = (BindWidget))
 	class UScrollBox* ipAdressTarget;

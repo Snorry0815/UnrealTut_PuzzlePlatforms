@@ -16,11 +16,26 @@ class PUZZLEPLATFORMS_API UServerFoundEntry : public UUserWidget
 {
 	GENERATED_BODY()
 public:
-	void Setup(UMainMenu* _parent, uint32 _index, const FText& inText);
+	void Setup(UMainMenu* _parent, uint32 _index, const class FOnlineSessionSearchResult& searchResult);
+
+	UPROPERTY(BlueprintReadOnly)
+	bool isSelected;
+
+	uint32 GetIndex() const
+	{
+		return index;
+	}
 
 private:
 	UPROPERTY(meta = (BindWidget))
 	class UTextBlock* serverName;
+
+	UPROPERTY(meta = (BindWidget))
+	class UTextBlock* serverOwnerName;
+
+	UPROPERTY(meta = (BindWidget))
+	class UTextBlock* numberOfPlayers;
+	
 	uint32 index; 
 
 	UPROPERTY()
@@ -31,4 +46,5 @@ private:
 
 	UFUNCTION()
 	void OnButtonPressed();
+
 };

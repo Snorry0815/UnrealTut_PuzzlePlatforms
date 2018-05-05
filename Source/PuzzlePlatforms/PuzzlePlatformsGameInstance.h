@@ -34,7 +34,7 @@ protected:
 	void ToggleHudMenu();
 
 	UFUNCTION(Exec)
-	virtual void Host() override;
+	virtual void Host(const FString& serverName) override;
 
 	UFUNCTION(Exec)
 	virtual void Join(const FString& adress) override;
@@ -77,4 +77,5 @@ private:
 
 	IOnlineSessionPtr sessionInterface;
 	bool refreshActive;
+	FString currentServerName;
 };

@@ -8,6 +8,7 @@
 #include "ScrollBox.h"
 #include "ConstructorHelpers.h"
 #include "Text.h"
+#include "EditableTextBox.h"
 #include "OnlineSessionSettings.h"
 
 UMainMenu::UMainMenu(const FObjectInitializer& ObjectInitializer)
@@ -22,6 +23,7 @@ UMainMenu::UMainMenu(const FObjectInitializer& ObjectInitializer)
 
 void UMainMenu::SetServerList(const TArray<FOnlineSessionSearchResult>& searchResults)
 {
+	wsResultField->SetActiveWidget(ipAdressTarget);
 	ipAdressTarget->ClearChildren();
 	selectedIndex.Reset();
 
@@ -31,12 +33,12 @@ void UMainMenu::SetServerList(const TArray<FOnlineSessionSearchResult>& searchRe
 		if (!searchResult.IsValid())
 			continue;
 
-		AddServerListEntry(searchResult.Session, index);
+		AddServerListEntry(searchResult, index);
 		++index;
 	}
 }
 
-void UMainMenu::AddServerListEntry(const FOnlineSession& session, uint32 index)
+void UMainMenu::AddServerListEntry(const FOnlineSessionSearchResult& searchResult, uint32 index)
 {
 	auto* world = this->GetWorld();
 	if (!ensure(world != nullptr))
@@ -46,9 +48,26 @@ void UMainMenu::AddServerListEntry(const FOnlineSession& session, uint32 index)
 	if (!ensure(entry != nullptr))
 		return;
 
-	entry->Setup(this, index, FText::FromString(session.GetSessionIdStr()));
+	entry->Setup(this, index, searchResult);
 
 	ipAdressTarget->AddChild(entry);
+}
+
+void UMainMenu::SetSelectedForIndex(uint32 index, bool value) const
+{
+	for (auto i = 0; i < ipAdressTarget->GetChildrenCount(); ++i)
+	{
+		auto* entry = ipAdressTarget->GetChildAt(i);
+		auto* serverFoundEntry = dynamic_cast<UServerFoundEntry*>(entry);
+		if (serverFoundEntry == nullptr)
+			continue;
+
+		if (serverFoundEntry->GetIndex() == index)
+		{
+			serverFoundEntry->isSelected = value;
+			return;
+		}
+	}
 }
 
 bool UMainMenu::Initialize()
@@ -85,16 +104,35 @@ bool UMainMenu::Initialize()
 		return false;
 	btnRefresh->OnClicked.AddDynamic(this, &UMainMenu::OnRefreshServerList);
 
+	if (!ensure(btnCancelHostSettings != nullptr))
+		return false;
+	btnCancelHostSettings->OnClicked.AddDynamic(this, &UMainMenu::OnCancelHostSettingsClicked);
+
+	if (!ensure(btnStartServerWithSettings != nullptr))
+		return false;
+	btnStartServerWithSettings->OnClicked.AddDynamic(this, &UMainMenu::OnStartServerWithSettingsClicked);
+
 	return true;
 }
 
 void UMainMenu::OnHostClicked()
 {
+	menuSelecter->SetActiveWidget(hostSettings);
+}
+
+void UMainMenu::OnCancelHostSettingsClicked()
+{
+
+	menuSelecter->SetActiveWidget(mainMenu);
+}
+
+void UMainMenu::OnStartServerWithSettingsClicked()
+{
 	UE_LOG(LogTemp, Warning, TEXT("OnHostClicked"));
 	if (menuInterface == nullptr)
 		return;
-	
-	menuInterface->Host();
+	FText name = serverNameField->GetText();
+	menuInterface->Host(name.ToString());
 }
 
 void UMainMenu::OnJoinClicked()
@@ -129,13 +167,18 @@ void UMainMenu::OnQuit()
 
 void UMainMenu::SelectIndex(uint32 index)
 {
+	if (selectedIndex.IsSet())
+		SetSelectedForIndex(selectedIndex.GetValue(), false);
+
 	selectedIndex = index;
-	UE_LOG(LogTemp, Warning, TEXT("hulla!"));
+	SetSelectedForIndex(selectedIndex.GetValue(), true);
 }
 
 void UMainMenu::OnRefreshServerList()
 {
 	if (menuInterface == nullptr)
 		return;
+
+	wsResultField->SetActiveWidget(refreshingIndicator);
 	menuInterface->RefreshServerList();
 }
