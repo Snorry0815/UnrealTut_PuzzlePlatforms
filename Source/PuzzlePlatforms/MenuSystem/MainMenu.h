@@ -17,9 +17,10 @@ public:
 	UMainMenu(const FObjectInitializer& ObjectInitializer);
 
 	void SetServerList(const TArray<FOnlineSessionSearchResult>& searchResults);
+	void SelectIndex(uint32 index);
 
 private:
-	void AddServerListEntry(const FString& serverName);
+	void AddServerListEntry(const class FOnlineSession& session, uint32 index);
 
 	UFUNCTION()
 	void OnHostClicked();
@@ -74,4 +75,6 @@ private:
 
 protected:
 	virtual bool Initialize() override;
+
+	TOptional<uint32> selectedIndex;
 };

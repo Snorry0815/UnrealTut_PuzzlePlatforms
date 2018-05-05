@@ -76,11 +76,9 @@ void UPuzzlePlatformsGameInstance::Init()
 		{
 			sessionInterface->OnCreateSessionCompleteDelegates.AddUObject(this, &UPuzzlePlatformsGameInstance::OnCreateSessionComplete);
 			sessionInterface->OnFindSessionsCompleteDelegates.AddUObject(this, &UPuzzlePlatformsGameInstance::OnFindSessionsComplete);
+			sessionInterface->OnJoinSessionCompleteDelegates.AddUObject(this, &UPuzzlePlatformsGameInstance::OnJoinSessionComplete);
+			
 			onlineSessionSearch = MakeShareable(new FOnlineSessionSearch());
-			//if (onlineSessionSearch.IsValid())
-			//{
-			//	onlineSessionSearch->bIsLanQuery = true;	
-			//}
 		}
 	}
 
@@ -134,6 +132,27 @@ void UPuzzlePlatformsGameInstance::Join(const FString& adress)
 
 	localPlayer->ClientTravel(adress, ETravelType::TRAVEL_Absolute);
 }
+
+void UPuzzlePlatformsGameInstance::JoinSelected(uint32 selectedIndex)
+{
+	if (!onlineSessionSearch.IsValid())
+		return;
+
+	const auto& results = onlineSessionSearch->SearchResults;
+	if (!ensure(selectedIndex < static_cast<uint32>(results.Num())))
+		return;
+
+	const auto& selected = results[selectedIndex];
+	if (!selected.IsValid())
+		return;
+
+
+	if (!sessionInterface.IsValid())
+		return;
+
+	sessionInterface->JoinSession(0, SESSION_NAME, selected);
+}
+
 
 void UPuzzlePlatformsGameInstance::RefreshServerList()
 {
@@ -231,6 +250,19 @@ void UPuzzlePlatformsGameInstance::OnCreateSessionComplete(FName SessionName, bo
 
 	if (GEngine)
 		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, TEXT("Hosting after session complete"));
+}
+
+void UPuzzlePlatformsGameInstance::OnJoinSessionComplete(FName SessionName, EOnJoinSessionCompleteResult::Type type)
+{
+	FString connectInfo;
+	if (!sessionInterface->GetResolvedConnectString(SESSION_NAME, connectInfo))
+		return;
+
+	auto* localPlayer = GetFirstLocalPlayerController();
+	if (!ensure(localPlayer != nullptr))
+		return;
+
+	localPlayer->ClientTravel(connectInfo, ETravelType::TRAVEL_Absolute);
 }
 
 void UPuzzlePlatformsGameInstance::QuitClient()

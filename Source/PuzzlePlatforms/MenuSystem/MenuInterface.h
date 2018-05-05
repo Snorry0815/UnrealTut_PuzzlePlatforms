@@ -25,6 +25,7 @@ public:
 	virtual void Host() = 0;
 	virtual void RefreshServerList() = 0;
 	virtual void Join(const FString& ipAdress) = 0;
+	virtual void JoinSelected(uint32 selectedIndex) = 0;
 	virtual void BackToMainMenu() = 0; 
 	virtual void Quit() = 0;
 };

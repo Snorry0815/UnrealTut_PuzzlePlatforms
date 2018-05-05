@@ -23,13 +23,20 @@ UMainMenu::UMainMenu(const FObjectInitializer& ObjectInitializer)
 void UMainMenu::SetServerList(const TArray<FOnlineSessionSearchResult>& searchResults)
 {
 	ipAdressTarget->ClearChildren();
+	selectedIndex.Reset();
+
+	uint32 index = 0;
 	for (const auto& searchResult : searchResults)
 	{
-		AddServerListEntry(searchResult.Session.GetSessionIdStr());
+		if (!searchResult.IsValid())
+			continue;
+
+		AddServerListEntry(searchResult.Session, index);
+		++index;
 	}
 }
 
-void UMainMenu::AddServerListEntry(const FString& serverName)
+void UMainMenu::AddServerListEntry(const FOnlineSession& session, uint32 index)
 {
 	auto* world = this->GetWorld();
 	if (!ensure(world != nullptr))
@@ -38,7 +45,8 @@ void UMainMenu::AddServerListEntry(const FString& serverName)
 	auto* entry = CreateWidget<UServerFoundEntry>(world, ServerFoundEntryClass);
 	if (!ensure(entry != nullptr))
 		return;
-	entry->SetText(FText::FromString(serverName));
+
+	entry->Setup(this, index, FText::FromString(session.GetSessionIdStr()));
 
 	ipAdressTarget->AddChild(entry);
 }
@@ -106,7 +114,10 @@ void UMainMenu::OnJoinServer()
 	if (menuInterface == nullptr)
 		return;
 
-	menuInterface->Join("");
+	if (!selectedIndex.IsSet())
+		return;
+
+	menuInterface->JoinSelected(selectedIndex.GetValue());
 }
 
 void UMainMenu::OnQuit()
@@ -114,6 +125,12 @@ void UMainMenu::OnQuit()
 	if (menuInterface == nullptr)
 		return;
 	menuInterface->Quit();
+}
+
+void UMainMenu::SelectIndex(uint32 index)
+{
+	selectedIndex = index;
+	UE_LOG(LogTemp, Warning, TEXT("hulla!"));
 }
 
 void UMainMenu::OnRefreshServerList()

@@ -40,6 +40,9 @@ protected:
 	virtual void Join(const FString& adress) override;
 
 	UFUNCTION(Exec)
+	virtual void JoinSelected(uint32 selectedIndex) override;
+
+	UFUNCTION(Exec)
 	virtual void RefreshServerList() override;
 
 	UFUNCTION(Exec)
@@ -56,6 +59,7 @@ private:
 	void OnDestroySessionBeforeHostingComplete (FName SessionName, bool bWasSuccessful);
 
 	void OnCreateSessionComplete(FName SessionName, bool bWasSuccessful);
+	void OnJoinSessionComplete(FName SessionName, EOnJoinSessionCompleteResult::Type type);
 
 	void StartSession();
 

@@ -6,6 +6,8 @@
 #include "Blueprint/UserWidget.h"
 #include "ServerFoundEntry.generated.h"
 
+class UMainMenu;
+
 /**
  * 
  */
@@ -14,9 +16,19 @@ class PUZZLEPLATFORMS_API UServerFoundEntry : public UUserWidget
 {
 	GENERATED_BODY()
 public:
-	void SetText(const FText& inText);
+	void Setup(UMainMenu* _parent, uint32 _index, const FText& inText);
 
 private:
 	UPROPERTY(meta = (BindWidget))
 	class UTextBlock* serverName;
+	uint32 index; 
+
+	UPROPERTY()
+	UMainMenu* parent;
+
+	UPROPERTY(meta = (BindWidget))
+	class UButton* btnServerFoundEntry;
+
+	UFUNCTION()
+	void OnButtonPressed();
 };
