@@ -11,7 +11,7 @@
 
 namespace
 {
-	const FName SESSION_NAME = TEXT("My Session Game");
+	//const FName SESSION_NAME = TEXT("GameSession");
 }
 
 UPuzzlePlatformsGameInstance::UPuzzlePlatformsGameInstance(const FObjectInitializer& objectinitializer)
@@ -109,10 +109,10 @@ void UPuzzlePlatformsGameInstance::Host(const FString& serverName)
 		return;
 
 	currentServerName = serverName;
-	auto* alreadyExistingSession = sessionInterface->GetNamedSession(SESSION_NAME);
+	auto* alreadyExistingSession = sessionInterface->GetNamedSession(NAME_GameSession);
 	if (alreadyExistingSession != nullptr)
 	{
-		sessionInterface->DestroySession(SESSION_NAME, DestroyBeforeHostingComplete);
+		sessionInterface->DestroySession(NAME_GameSession, DestroyBeforeHostingComplete);
 	}
 	else
 	{
@@ -150,7 +150,7 @@ void UPuzzlePlatformsGameInstance::JoinSelected(uint32 selectedIndex)
 	if (!sessionInterface.IsValid())
 		return;
 
-	sessionInterface->JoinSession(0, SESSION_NAME, selected);
+	sessionInterface->JoinSession(0, NAME_GameSession, selected);
 }
 
 
@@ -233,11 +233,11 @@ void UPuzzlePlatformsGameInstance::StartSession()
 	
 	sessionSettings.bIsLANMatch = (IOnlineSubsystem::Get()->GetSubsystemName() == "NULL");
 
-	sessionSettings.NumPublicConnections = 2;
+	sessionSettings.NumPublicConnections = 5;
 	sessionSettings.bShouldAdvertise = true;
 	sessionSettings.bUsesPresence = true;
 	sessionSettings.Set(TEXT("ServerName"), currentServerName, EOnlineDataAdvertisementType::ViaOnlineServiceAndPing);
-	sessionInterface->CreateSession(0, SESSION_NAME, sessionSettings);
+	sessionInterface->CreateSession(0, NAME_GameSession, sessionSettings);
 }
 
 void UPuzzlePlatformsGameInstance::OnCreateSessionComplete(FName SessionName, bool bWasSuccessful)
@@ -252,7 +252,7 @@ void UPuzzlePlatformsGameInstance::OnCreateSessionComplete(FName SessionName, bo
 	if (!ensure(world != nullptr))
 		return;
 
-	world->ServerTravel("/Game/ThirdPersonCPP/Maps/ThirdPersonExampleMap?listen");
+	world->ServerTravel("/Game/Maps/Lobby?listen");
 
 	if (GEngine)
 		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, TEXT("Hosting after session complete"));
@@ -261,7 +261,7 @@ void UPuzzlePlatformsGameInstance::OnCreateSessionComplete(FName SessionName, bo
 void UPuzzlePlatformsGameInstance::OnJoinSessionComplete(FName SessionName, EOnJoinSessionCompleteResult::Type type)
 {
 	FString connectInfo;
-	if (!sessionInterface->GetResolvedConnectString(SESSION_NAME, connectInfo))
+	if (!sessionInterface->GetResolvedConnectString(NAME_GameSession, connectInfo))
 		return;
 
 	auto* localPlayer = GetFirstLocalPlayerController();
